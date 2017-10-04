@@ -1,0 +1,53 @@
+---
+
+- name: install fontconfig
+  become: True
+  package:
+    state: present
+    name: "{{ item }}"
+  with_items:
+    - fontconfig
+  tags:
+    - packages
+    - powerline-fonts
+
+- name: download powerline-fonts repository from github
+  git:
+    repo: 'https://github.com/powerline/fonts.git'
+    dest: /tmp/powerline-fonts
+  tags:
+    - powerline-fonts
+
+- name: ensure all users have a local fonts directory
+  file:
+    dest: "{{ item.homedir }}/.local/share/fonts"
+    state: directory
+    owner: "{{ item.user }}"
+    group: "{{ item.user }}"
+  with_items: "{{ all_users }}"
+  tags:
+    - powerline-fonts
+
+- name: copy fonts
+  command: cp -r /tmp/powerline-fonts/{{ item[1] }} {{ item[0].homedir }}/.local/share/fonts/
+  with_nested:
+   - "{{ all_users }}"
+   - "{{ all_fonts }}"
+  tags:
+    - powerline-fonts
+
+- name: set fonts directory ownership
+  file:
+    dest: "{{ item[0].homedir }}/.local/share/fonts/{{ item[1] }}"
+    state: directory
+    owner: "{{ item[0].user }}"
+    group: "{{ item[0].user }}"
+  with_nested:
+   - "{{ all_users }}"
+   - "{{ all_fonts }}"
+  tags:
+    - powerline-fonts
+
+- name: reset font cache
+  command: fc-cache -f {{ item.homedir }}/.local/share/fonts
+  with_items: "{{ all_users }}"
