@@ -1,3 +1,6 @@
+[![Build Status](https://travis-ci.org/tvieira/ansible-powerline-fonts.svg?branch=master)](https://travis-ci.org/tvieira/ansible-powerline-fonts)
+[![Ansible Galaxy](https://img.shields.io/ansible/role/20964.svg)](https://galaxy.ansible.com/tvieira//)
+
 Powerline-Fonts
 ===============
 
